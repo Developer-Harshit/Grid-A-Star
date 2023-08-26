@@ -3,7 +3,7 @@
 import pygame
 import sys
 from scripts.const import WIDTH, HEIGHT, BG_COLOR, RENDER_SCALE
-from scripts.node import Maze, NodeMap
+from scripts.nodemap import NodeMap
 
 
 print("Starting Game")
@@ -20,13 +20,21 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-        self.nodemap = NodeMap()
+        # self.nodemap = NodeMap()
 
-        self.maze = Maze(
-            (WIDTH / 2 / RENDER_SCALE, HEIGHT / 2 / RENDER_SCALE),
-            self.nodemap,
-            self.nodemap.load("maps/69.json"),
+        # self.maze = Maze(
+        #     (WIDTH / 2 / RENDER_SCALE, HEIGHT / 2 / RENDER_SCALE),
+        #     self.nodemap,
+        #     self.nodemap.load("maps/69.json"),
+        # )
+
+        self.node_map = NodeMap(
+            pos=(WIDTH / 2 / RENDER_SCALE, HEIGHT / 2 / RENDER_SCALE),
+            size=16,
+            row=0,
+            col=0,
         )
+        self.node_map.load("maps/69.json")
 
     def run(self):
         running = True
@@ -34,7 +42,7 @@ class Game:
             # For Background ------------------------------------------------------|
             self.display.fill(BG_COLOR)
 
-            self.maze.draw(self.display)
+            self.node_map.draw(self.display)
 
             # Checking Events -----------------------------------------------------|
             for event in pygame.event.get():

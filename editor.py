@@ -3,7 +3,7 @@
 import pygame
 import sys
 from scripts.const import WIDTH, HEIGHT, BG_COLOR, RENDER_SCALE
-from scripts.node import Maze, NodeMap
+from scripts.nodemap import NodeMap
 
 
 print("Starting Game")
@@ -24,10 +24,10 @@ class Game:
         self.file_name = "maps/0.json"
         row = 10 * 2
         col = 10 * 2
+        size = 16
 
-        self.nodemap = NodeMap(row, col)
-        self.maze = Maze(
-            (WIDTH / 2 / RENDER_SCALE, HEIGHT / 2 / RENDER_SCALE), self.nodemap, 16
+        self.node_map = NodeMap(
+            (WIDTH / 2 / RENDER_SCALE, HEIGHT / 2 / RENDER_SCALE), size, row, col
         )
 
         self.current_node = 0
@@ -42,20 +42,19 @@ class Game:
             self.display.fill(BG_COLOR)
             # For maze ------------------------------------------------------------|
 
-            self.maze.draw(self.display)
+            self.node_map.draw(self.display)
+            mouse_pos = (
+                pygame.mouse.get_pos()[0] / RENDER_SCALE,
+                pygame.mouse.get_pos()[1] / RENDER_SCALE,
+            )
+
             if self.shift_click:
-                mouse_pos = (
-                    pygame.mouse.get_pos()[0] / RENDER_SCALE,
-                    pygame.mouse.get_pos()[1] / RENDER_SCALE,
+                self.node_map.change_node(
+                    g_pos=mouse_pos, n_type=NODE_TYPES[self.current_node]
                 )
-                self.maze.change_node(mouse_pos, NODE_TYPES[self.current_node])
 
             if self.highlight:
-                mouse_pos = (
-                    pygame.mouse.get_pos()[0] / RENDER_SCALE,
-                    pygame.mouse.get_pos()[1] / RENDER_SCALE,
-                )
-                self.maze.highlight(self.display, mouse_pos)
+                self.node_map.highlight(self.display, mouse_pos)
 
             # Checking Events -----------------------------------------------------|
             for event in pygame.event.get():
@@ -73,11 +72,8 @@ class Game:
                     if event.key == pygame.K_LSHIFT:
                         self.shift_click = True
 
-                        # self.maze.change_node(mouse_pos, "wall")
-                        pass
-
                     if event.key == pygame.K_k:
-                        self.nodemap.save(self.file_name)
+                        self.node_map.save(self.file_name)
                     # if event.key == pygame.K_w:
                     #     self.nodemap._moveActive((0, -1))
                     # if event.key == pygame.K_a:
