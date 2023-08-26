@@ -1,0 +1,4 @@
+myenv
+.vscode
+scripts/__pycache__
+todo.txt
