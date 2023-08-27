@@ -1,8 +1,10 @@
+from random import choice
 from scripts.utils import draw_square, draw_border, load_image, list_to_location
 import json
 
+import pygame
+
 NEIGHBOR_OFFSET = {"top": (0, -1), "left": (-1, 0), "bottom": (0, 1), "right": (1, 0)}
-from random import choice
 
 
 # works locally and individually
@@ -12,9 +14,26 @@ class Node:
 
         self.location = location
         self.type = n_type
-        self.neighbours = {"top": False, "left": False, "bottom": False, "right": False}
+
+        self.g = 10**10
+        self.h = 0
+        self.f = 0
+
+    def str_location(self):
+        return list_to_location(self.location)
+
+    def gCost(self, other):
+        self.g = other.g + 1
+        return self.g
+
+    def heuristics(self, goal):
+        self.h = abs(self.location[0] - goal.location[0]) + abs(
+            self.location[1] - goal.location[1]
+        )
+        return self.h
 
     def get_neighbours(self, nodemap):
+        result = []
         for direction in NEIGHBOR_OFFSET:
             neighbour_loc = (
                 str(self.location[0] + NEIGHBOR_OFFSET[direction][0])
@@ -22,7 +41,8 @@ class Node:
                 + str(self.location[1] + NEIGHBOR_OFFSET[direction][1])
             )
             if neighbour_loc in nodemap:
-                self.neighbours[direction] = nodemap[neighbour_loc]
+                result.append(nodemap[neighbour_loc])
+        return result
 
 
 #     def _moveActive(self, direction=(0, 0)):
@@ -41,8 +61,6 @@ class Node:
 
 
 # works globally
-
-import pygame
 
 
 class NodeMap:
@@ -104,8 +122,8 @@ class NodeMap:
         json.dump(
             {
                 "map": my_map,
-                "row": self.x_count,
-                "col": self.y_count,
+                "row": self.row,
+                "col": self.col,
                 "size": self.size,
             },
             f,

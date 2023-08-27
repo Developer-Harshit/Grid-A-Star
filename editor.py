@@ -1,4 +1,4 @@
-# Basic Screen
+# Editor
 
 import pygame
 import sys
@@ -13,7 +13,7 @@ NODE_TYPES = ["wall", "ground"]
 class Game:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Basic Screen")
+        pygame.display.set_caption("Editor")
 
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         # display is half of screen size
@@ -29,6 +29,7 @@ class Game:
         self.node_map = NodeMap(
             (WIDTH / 2 / RENDER_SCALE, HEIGHT / 2 / RENDER_SCALE), size, row, col
         )
+        self.node_map.load(self.file_name)
 
         self.current_node = 0
 
